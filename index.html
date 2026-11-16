@@ -23,7 +23,7 @@ const islands=[
 {id:'golem',name:'Остров голема',x:0,y:800,rx:205,ry:125,drawRx:230,drawRy:150,color:'#51465c'},
 {id:'paladin',name:'Остров паладина',x:0,y:-1050,rx:220,ry:145,drawRx:250,drawRy:170,color:'#51465c'}
 ];
-function dock(i){const a=.16;return{x:i.x+i.rx*.9*Math.cos(a),y:i.y+i.ry*.9*Math.sin(a)}}function outerDock(i){const d=dock(i),dx=d.x-i.x,dy=d.y-i.y,l=Math.hypot(dx,dy)||1;return{x:d.x+dx/l*115,y:d.y+dy/l*115}}
+function dock(i){const a=.16;return{x:i.x+(i.drawRx+75)*Math.cos(a),y:i.y+(i.drawRy+75)*Math.sin(a)}}function outerDock(i){const d=dock(i),dx=d.x-i.x,dy=d.y-i.y,l=Math.hypot(dx,dy)||1;return{x:d.x+dx/l*115,y:d.y+dy/l*115}}
 let currentIsland='start',boat=dock(islands[0]),voyage=null,respawnsUsed=0;const trader={x:445,y:-260};
 const p={x:0,y:0,hp:300,max:300,xp:0,lv:1,coins:0,damage:100,speed:50,atk:25,def:0,weapon:'Рука',cd:0,dash:0,invul:0,hitFlash:0};
 const gear=[{name:'Меч',price:100,type:'weapon',damage:200,speed:45,atk:22},{name:'Топор',price:125,type:'weapon',damage:250,speed:40,atk:20},{name:'Булава',price:150,type:'weapon',damage:325,speed:37,atk:15},{name:'Шлем',price:100,type:'armor',slot:'head',def:20,max:400},{name:'Ботинки',price:100,type:'armor',slot:'feet',def:25,max:800},{name:'Поножи',price:125,type:'armor',slot:'legs',def:40,max:700},{name:'Нагрудник',price:150,type:'armor',slot:'chest',def:50,max:550}];
@@ -53,11 +53,11 @@ function close(){screen='playing';show()}
 $('#play').onclick=()=>{reset();screen='playing';show()};$('#resume').onclick=close;$('#menu1').onclick=$('#menu2').onclick=$('#menu3').onclick=()=>{screen='menu';show('menu')};$('#respawn').onclick=()=>{if(respawnsUsed>=3)return;respawnsUsed++;p.x=0;p.y=0;p.hp=p.max;p.invul=2;$('#livesleft').textContent='Осталось возрождений: '+(3-respawnsUsed);$('#respawn').disabled=respawnsUsed>=3;if(respawnsUsed>=3)$('#respawn').textContent='Лимит возрождений исчерпан';screen='playing';show()};$('#shopclose').onclick=$('#invclose').onclick=close;
 function openBoatMenu(){if(voyage||Math.hypot(p.x-boat.x,p.y-boat.y)>75){note('Подойди ближе к лодке');return}screen='boatmenu';show('boatmenu');let host=$('#islandchoices');host.innerHTML='';islands.filter(i=>i.id!==currentIsland).forEach(i=>{let b=document.createElement('button');b.className='btn';b.textContent=i.name;b.onclick=()=>startVoyage(i);host.append(b)})}
 function seaRoute(start,end,source,dest){
- const obstacles=islands.filter(i=>i.id!==source.id&&i.id!==dest.id);
+ const obstacles=islands;
  const nodes=[start,end];
  // Запас вокруг видимого контура острова учитывает размеры корпуса лодки.
  obstacles.forEach(is=>{for(let k=0;k<48;k++){const a=2*Math.PI*k/48;nodes.push({x:is.x+Math.cos(a)*(is.drawRx+90),y:is.y+Math.sin(a)*(is.drawRy+90)})}});
- function clear(a,b){for(const is of obstacles){for(let k=1;k<41;k++){const q=k/41,x=a.x+(b.x-a.x)*q,y=a.y+(b.y-a.y)*q,dx=(x-is.x)/(is.drawRx+55),dy=(y-is.y)/(is.drawRy+55);if(dx*dx+dy*dy<1)return false}}return true}
+ function clear(a,b){for(const is of obstacles){for(let k=1;k<41;k++){const q=k/41,x=a.x+(b.x-a.x)*q,y=a.y+(b.y-a.y)*q,dx=(x-is.x)/(is.drawRx+75),dy=(y-is.y)/(is.drawRy+75);if(dx*dx+dy*dy<1)return false}}return true}
  const n=nodes.length,dist=Array(n).fill(Infinity),prev=Array(n).fill(-1),used=Array(n).fill(false);dist[0]=0;
  for(let step=0;step<n;step++){let u=-1;for(let j=0;j<n;j++)if(!used[j]&&(u<0||dist[j]<dist[u]))u=j;if(u<0||!Number.isFinite(dist[u]))break;if(u===1)break;used[u]=true;for(let v=0;v<n;v++){if(v===u||used[v]||!clear(nodes[u],nodes[v]))continue;const w=Math.hypot(nodes[v].x-nodes[u].x,nodes[v].y-nodes[u].y);if(dist[u]+w<dist[v]){dist[v]=dist[u]+w;prev[v]=u}}}
  if(!Number.isFinite(dist[1]))return null;const path=[];for(let v=1;v!==-1;v=prev[v]){path.push(nodes[v]);if(v===0)break}return path.reverse()
