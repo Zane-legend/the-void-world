@@ -29,7 +29,7 @@ const p={x:0,y:0,hp:300,max:300,xp:0,lv:1,coins:0,damage:100,speed:50,atk:25,def
 const gear=[{name:'Меч',price:100,type:'weapon',damage:200,speed:45,atk:22},{name:'Топор',price:125,type:'weapon',damage:250,speed:40,atk:20},{name:'Булава',price:150,type:'weapon',damage:325,speed:37,atk:15},{name:'Шлем',price:100,type:'armor',slot:'head',def:20,max:400},{name:'Ботинки',price:100,type:'armor',slot:'feet',def:25,max:800},{name:'Поножи',price:125,type:'armor',slot:'legs',def:40,max:700},{name:'Нагрудник',price:150,type:'armor',slot:'chest',def:50,max:550}];
 let owned=[],equipped={},mobs=[],crabRespawns=[],knightRespawns=[],levelMultiplier=1;
 function mob(name,x,y,hp,damage,def,speed,color,kind,coins){return{name,x,y,hp,max:hp,damage,def,speed,color,kind,coins,alive:true,cd:1}}
-function reset(){currentIsland='start';boat=dock(islands[0]);voyage=null;respawnsUsed=0;crabRespawns=[];knightRespawns=[];levelMultiplier=1;Object.assign(p,{x:0,y:0,hp:300,max:300,xp:0,lv:1,coins:0,damage:100,speed:50,atk:25,def:0,weapon:'Рука',cd:0,dash:0,invul:0});owned=[];equipped={};mobs=[
+function reset(){currentIsland='start';boat=dock(islands[0]);voyage=null;respawnsUsed=0;$('#respawn').disabled=false;$('#respawn').textContent='Возродиться';$('#livesleft').textContent='Осталось возрождений: 3';crabRespawns=[];knightRespawns=[];levelMultiplier=1;Object.assign(p,{x:0,y:0,hp:300,max:300,xp:0,lv:1,coins:0,damage:100,speed:50,atk:25,def:0,weapon:'Рука',cd:0,dash:0,invul:0});owned=[];equipped={};mobs=[
 mob('Осколочный краб',-78,-18,500,100,0,28,'#a855f7','crab',35),
 mob('Осколочный краб',68,-12,500,100,0,41,'#a855f7','crab',35),
 mob('Осколочный краб',8,65,500,100,0,54,'#a855f7','crab',35),
